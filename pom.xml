@@ -7,7 +7,7 @@
    </parent>
    <groupId>org.jboss.forge</groupId>
    <artifactId>xml-parser</artifactId>
-   <version>1.0.0.Final</version>
+   <version>1.0.1-SNAPSHOT</version>
    <packaging>jar</packaging>
    <name>Forge - XML Parser</name>
    <licenses>
@@ -56,7 +56,7 @@
       <connection>scm:git:git://github.com/forge/xml-parser.git</connection>
       <developerConnection>scm:git:git@github.com:forge/xml-parser.git</developerConnection>
       <url>http://github.com/forge/xml-parser</url>
-     <tag>1.0.0.Final</tag>
+     <tag>HEAD</tag>
   </scm>
 </project>
 
