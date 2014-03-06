@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -49,14 +50,14 @@ public class XMLParser
    {
       try
       {
-         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+         DocumentBuilderFactory factory = createDocumentBuilderFactory();
          factory.setNamespaceAware(true);
          DocumentBuilder builder = factory.newDocumentBuilder();
          Document root = builder.newDocument();
 
          writeRecursive(root, node);
 
-         Transformer transformer = TransformerFactory.newInstance().newTransformer();
+         Transformer transformer = createTransformerFactory().newTransformer();
          transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
          transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
@@ -70,6 +71,38 @@ public class XMLParser
       {
          throw new XMLParserException("Could not export Node strcuture to XML", e);
       }
+   }
+
+   public static TransformerFactory createTransformerFactory() throws TransformerFactoryConfigurationError
+   {
+      TransformerFactory transformerFactory;
+      try
+      {
+         transformerFactory = TransformerFactory.newInstance();
+      }
+      catch (Exception e)
+      {
+         transformerFactory = TransformerFactory.newInstance(
+                  "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl",
+                  Thread.currentThread().getContextClassLoader());
+      }
+      return transformerFactory;
+   }
+
+   public static DocumentBuilderFactory createDocumentBuilderFactory()
+   {
+      DocumentBuilderFactory factory;
+      try
+      {
+         factory = DocumentBuilderFactory.newInstance();
+      }
+      catch (Exception e)
+      {
+         factory = DocumentBuilderFactory.newInstance(
+                  "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl", Thread.currentThread()
+                           .getContextClassLoader());
+      }
+      return factory;
    }
 
    public static Node parse(final File file) throws XMLParserException, FileNotFoundException
@@ -112,7 +145,7 @@ public class XMLParser
             return null;
          }
 
-         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+         DocumentBuilderFactory factory = createDocumentBuilderFactory();
          factory.setNamespaceAware(true);
          DocumentBuilder builder = factory.newDocumentBuilder();
          Document doc = builder.parse(stream);
@@ -231,7 +264,7 @@ public class XMLParser
       return true;
    }
 
-   public enum NodeType
+   private enum NodeType
    {
       COMMENT("#comment"),
       CDATA_SECTION("#cdata-section");
