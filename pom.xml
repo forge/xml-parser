@@ -45,6 +45,18 @@
 
    <dependencies>
       <dependency>
+         <groupId>xerces</groupId>
+         <artifactId>xercesImpl</artifactId>
+         <version>2.11.0</version>
+         <scope>provided</scope>
+         <exclusions>
+            <exclusion>
+               <artifactId>xml-apis</artifactId>
+               <groupId>xml-apis</groupId>
+            </exclusion>
+         </exclusions>
+      </dependency>
+      <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <version>4.10</version>
@@ -52,11 +64,40 @@
       </dependency>
    </dependencies>
 
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>shade</goal>
+                  </goals>
+                  <configuration>
+                     <relocations>
+                        <relocation>
+                           <pattern>org.apache</pattern>
+                           <shadedPattern>org.jboss.forge.parser.xml.org.apache</shadedPattern>
+                           <includes>
+                              <include>org.apache.xml.*</include>
+                              <include>org.apache.xerces.*</include>
+                           </includes>
+                        </relocation>
+                     </relocations>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
    <scm>
       <connection>scm:git:git://github.com/forge/xml-parser.git</connection>
       <developerConnection>scm:git:git@github.com:forge/xml-parser.git</developerConnection>
       <url>http://github.com/forge/xml-parser</url>
-     <tag>HEAD</tag>
-  </scm>
+      <tag>HEAD</tag>
+   </scm>
 </project>
 
